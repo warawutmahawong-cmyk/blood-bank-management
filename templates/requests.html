@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1><i class="fa-solid fa-file-medical"></i> {{ t.req_title }}</h1>
+    <button onclick="openModal('addRequestModal')" class="btn"><i class="fa-solid fa-plus"></i> {{ t.add_req }}</button>
+</header>
+
+<div id="addRequestModal" class="modal">
+    <div class="modal-content">
+        <button onclick="closeModal('addRequestModal')" class="close-btn">&times;</button>
+        <h2>{{ t.add_req }}</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="add">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>{{ t.hospital }}</label>
+                    <select name="hospital" required>
+                        <option value="">-- {% if lang == 'EN' %}Select Hospital{% else %}เลือกโรงพยาบาล{% endif %} --</option>
+                        {% for h in hospitals %}
+                        <option value="{{ h.name }}">{{ h.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>{{ t.blood_type }}</label>
+                    <select name="blood_type" required>
+                        <option value="">-- {% if lang == 'EN' %}Select Group{% else %}เลือกกรุ๊ป{% endif %} --</option>
+                        {% for g in ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] %}
+                        <option value="{{ g }}">{{ g }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>{{ t.th_qty }} ({{ t.bag_unit }})</label>
+                    <input type="number" name="quantity" value="1" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>{{ t.urgency }}</label>
+                    <select name="urgency" required>
+                        <option value="NORMAL">NORMAL (ปกติ)</option>
+                        <option value="URGENT">URGENT (ด่วน)</option>
+                        <option value="CRITICAL">CRITICAL (วิกฤต)</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>{{ t.th_reason }}</label>
+                    <input type="text" name="reason" placeholder="{% if lang == 'EN' %}e.g. Surgery, Accident{% else %}เช่น อุบัติเหตุทางถนน, ผ่าตัดใหญ่{% endif %}" required>
+                </div>
+                <div class="form-group full-width" style="margin-top: 10px;">
+                    <button type="submit" class="btn" style="width: 100%;">{% if lang == 'EN' %}Submit Request{% else %}ส่งคำขอเข้าคิว{% endif %}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>{% if lang == 'EN' %}Priority Queue (Auto-sorted: Critical - Urgent - Normal){% else %}Priority Queue (จัดลำดับอัตโนมัติ: วิกฤต - ด่วน - ปกติ){% endif %}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>{{ t.th_req_id }}</th>
+                <th>{{ t.hospital }}</th>
+                <th>{{ t.blood_type }}</th>
+                <th>{{ t.th_qty }}</th>
+                <th>{{ t.urgency }}</th>
+                <th>{{ t.th_reason }}</th>
+                <th>{{ t.th_req_date }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in pq_items %}
+            <tr>
+                <td><strong>{{ req.request_id }}</strong></td>
+                <td>{{ req.hospital }}</td>
+                <td><span class="badge badge-red">{{ req.blood_type }}</span></td>
+                <td>{{ req.quantity }} {{ t.bag_unit }}</td>
+                <td><span class="badge badge-red">{{ req.urgency }}</span></td>
+                <td>{{ req.reason }}</td>
+                <td>{{ req.date }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted);">{{ t.no_req }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

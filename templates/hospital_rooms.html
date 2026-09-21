@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1><i class="fa-solid fa-door-open"></i> {% if lang == 'EN' %}Storage Rooms:{% else %}ห้องเก็บเลือด:{% endif %} {{ hospital.name }} ({{ hospital.id }})</h1>
+    <div>
+        <button onclick="openModal('addRoomModal')" class="btn"><i class="fa-solid fa-plus"></i> {% if lang == 'EN' %}Add Room{% else %}เพิ่มห้องเก็บเลือด{% endif %}</button>
+        <a href="{{ url_for('hospitals') }}" class="btn btn-secondary" style="margin-left: 10px;"><i class="fa-solid fa-arrow-left"></i> {% if lang == 'EN' %}Back{% else %}กลับหน้าโรงพยาบาล{% endif %}</a>
+    </div>
+</header>
+
+<div id="addRoomModal" class="modal">
+    <div class="modal-content">
+        <button onclick="closeModal('addRoomModal')" class="close-btn">&times;</button>
+        <h2>{% if lang == 'EN' %}Add Storage Room / Refrigerator for{% else %}เพิ่มห้องเก็บเลือด / ตู้แช่ สำหรับ{% endif %} {{ hospital.name }}</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="add_room">
+            <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>{% if lang == 'EN' %}Room / Fridge Name{% else %}ชื่อห้องเก็บ / ตู้แช่{% endif %}</label>
+                    <input type="text" name="room_name" placeholder="{% if lang == 'EN' %}e.g. Main Cold Room{% else %}เช่น ห้องเย็นหลัก ชั้น 1{% endif %}" required>
+                </div>
+                <div class="form-group">
+                    <label>{% if lang == 'EN' %}Capacity (bags){% else %}ความจุสูงสุด (ถุง){% endif %}</label>
+                    <input type="number" name="capacity" value="200" required>
+                </div>
+                <div class="form-group">
+                    <label>{% if lang == 'EN' %}Temperature{% else %}อุณหภูมิ{% endif %}</label>
+                    <input type="text" name="temperature" value="4°C" required>
+                </div>
+                <div class="form-group full-width" style="margin-top: 10px;">
+                    <button type="submit" class="btn" style="width: 100%;">{% if lang == 'EN' %}Save Room{% else %}บันทึกห้องเก็บเลือด{% endif %}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>{% if lang == 'EN' %}Storage Rooms & Refrigerators List{% else %}รายชื่อห้องเก็บเลือดและตู้แช่{% endif %}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>{% if lang == 'EN' %}Room Code{% else %}รหัสห้อง{% endif %}</th>
+                <th>{% if lang == 'EN' %}Room Name{% else %}ชื่อห้องเก็บ / ตู้แช่{% endif %}</th>
+                <th>{% if lang == 'EN' %}Capacity{% else %}ความจุสูงสุด{% endif %}</th>
+                <th>{% if lang == 'EN' %}Temperature{% else %}อุณหภูมิ{% endif %}</th>
+                <th>{% if lang == 'EN' %}Bags in Room{% else %}ถุงเลือดในห้องนี้{% endif %}</th>
+                <th>{{ t.th_action }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+            <tr>
+                <td><strong>{{ room.room_id }}</strong></td>
+                <td>{{ room.room_name }}</td>
+                <td>{{ room.capacity }} {% if lang == 'EN' %}bags{% else %}ถุง{% endif %}</td>
+                <td><span class="badge badge-green">{{ room.temperature }}</span></td>
+                <td>
+                    {% set count = namespace(value=0) %}
+                    {% for bag in bags %}
+                        {% if bag.location == room.room_id %}
+                            {% set count.value = count.value + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    <strong>{{ count.value }}</strong> {% if lang == 'EN' %}bags{% else %}ถุง{% endif %}
+                </td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_room">
+                        <input type="hidden" name="room_id" value="{{ room.room_id }}">
+                        <button type="submit" class="btn btn-sm" style="background:#e53e3e;">{{ t.delete }}</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted);">{% if lang == 'EN' %}No storage rooms in this hospital{% else %}ยังไม่มีห้องเก็บเลือดในโรงพยาบาลนี้{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

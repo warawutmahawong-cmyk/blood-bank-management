@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="{{ lang.lower() }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Blood Bank Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Navbar แดงไล่เฉดเต็มจอ -->
+    <nav class="top-navbar">
+        <div class="top-navbar-left">
+            <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <a href="{{ url_for('dashboard') }}" class="top-brand"><i class="fa-solid fa-droplet"></i> Blood Bank MS</a>
+        </div>
+        <div class="top-navbar-right">
+            <div class="top-contact-info">
+                <span><i class="fa-solid fa-phone"></i> {{ site_info.phone }}</span>
+                <span><i class="fa-solid fa-envelope"></i> {{ site_info.email }}</span>
+            </div>
+            <div class="lang-switch">
+                <a href="{{ url_for('set_lang', lang='TH') }}" class="{% if lang == 'TH' %}active{% endif %}">TH</a>
+                <a href="{{ url_for('set_lang', lang='EN') }}" class="{% if lang == 'EN' %}active{% endif %}">EN</a>
+            </div>
+            <button onclick="openModal('aboutModal')" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-info"></i> {{ t.about }}</button>
+        </div>
+    </nav>
+
+    <!-- Modal: About this Website -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content" style="max-width: 850px;">
+            <button onclick="closeModal('aboutModal')" class="close-btn">&times;</button>
+            <h2><i class="fa-solid fa-hospital-user" style="color: var(--primary-red);"></i> {{ t.about }}</h2>
+            
+            <div style="margin-bottom: 25px; line-height: 1.6;">
+                <h3 style="color: var(--dark-red); margin-bottom: 8px;">📌 {% if lang == 'EN' %}What is this website and why was it built?{% else %}เว็บไซต์นี้ทำอะไร และสร้างขึ้นเพื่ออะไร?{% endif %}</h3>
+                <p>{% if lang == 'EN' %}The Blood Bank Management System is developed as an educational project for Data Structures & Algorithms. It simulates real-world hospital blood bank operations, managing blood bag inventories, requests, and distributions efficiently.{% else %}ระบบจัดการคลังเลือด (Blood Bank Management System) พัฒนาขึ้นเพื่อเป็นโปรเจกต์ศึกษาด้านโครงสร้างข้อมูลและอัลกอริทึม (Data Structures & Algorithms) โดยจำลองกระบวนการทำงานจริงของธนาคารเลือดโรงพยาบาล ช่วยบริหารจัดการสต็อกถุงเลือด คำขอรับเลือด และการจ่ายเลือดตามหลักการแพทย์{% endif %}</p>
+            </div>
+
+            <div style="margin-bottom: 25px; line-height: 1.6;">
+                <h3 style="color: var(--dark-red); margin-bottom: 8px;">⚙️ {% if lang == 'EN' %}How to Use the System{% else %}วิธีการใช้งานระบบ{% endif %}</h3>
+                <ul style="padding-left: 20px; color: var(--text-muted);">
+                    <li><strong>Dashboard:</strong> {% if lang == 'EN' %}View overall blood inventory statistics and urgent requests.{% else %}ดูภาพรวมสถิติคลังเลือดและคำขอเร่งด่วน{% endif %}</li>
+                    <li><strong>Blood Inventory:</strong> {% if lang == 'EN' %}Manage blood bags in inventory using a Linked List structure.{% else %}จัดการถุงเลือดในคลังผ่านโครงสร้าง Linked List{% endif %}</li>
+                    <li><strong>Hospitals:</strong> {% if lang == 'EN' %}Manage hospital data and storage rooms.{% else %}จัดการข้อมูลโรงพยาบาลและห้องเก็บเลือด/ตู้แช่{% endif %}</li>
+                    <li><strong>Blood Requests:</strong> {% if lang == 'EN' %}Manage request queues using Queue and prioritize using Priority Queue.{% else %}จัดการคิวคำขอด้วย Queue และจัดลำดับความสำคัญด้วย Priority Queue{% endif %}</li>
+                    <li><strong>Distribution (FEFO):</strong> {% if lang == 'EN' %}Distribute blood using the FEFO principle and record history with a Stack.{% else %}จ่ายเลือดตามหลัก First Expired, First Out และบันทึกประวัติด้วย Stack{% endif %}</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 25px; background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color);">
+                <h3 style="color: var(--dark-red); margin-bottom: 12px;"><i class="fa-solid fa-network-wired"></i> Data Structures Implemented</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.9rem;">
+                    <div><strong>1. Linked List:</strong> {% if lang == 'EN' %}Store and manage blood bag items via linked nodes.{% else %}จัดเก็บและจัดการรายการถุงเลือดแบบเชื่อมโยง Node{% endif %}</div>
+                    <div><strong>2. Queue:</strong> {% if lang == 'EN' %}Manage hospital blood request queues using FIFO.{% else %}จัดการคิวโรงพยาบาลที่ขอเลือดแบบ FIFO{% endif %}</div>
+                    <div><strong>3. Priority Queue:</strong> {% if lang == 'EN' %}Prioritize requests (Critical ➔ Urgent ➔ Normal).{% else %}จัดลำดับความเร่งด่วน (Critical ➔ Urgent ➔ Normal){% endif %}</div>
+                    <div><strong>4. Stack:</strong> {% if lang == 'EN' %}Store recent distribution history using LIFO.{% else %}จัดเก็บประวัติการจ่ายเลือดล่าสุดแบบ LIFO{% endif %}</div>
+                </div>
+                <div style="margin-top: 15px; text-align: right;">
+                    <a href="{{ url_for('structures_page') }}" class="btn btn-sm" style="background: var(--primary-red);"><i class="fa-solid fa-network-wired"></i> {% if lang == 'EN' %}Open Fullscreen Visual{% else %}เปิดหน้า Visual เต็มจอ{% endif %}</a>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid var(--border-color); padding-top: 20px;">
+                <h3 style="color: var(--dark-red); margin-bottom: 12px;"><i class="fa-solid fa-address-book"></i> {% if lang == 'EN' %}Contact Info Settings{% else %}แก้ไขข้อมูลติดต่อเว็บไซต์ (Contact Info Settings){% endif %}</h3>
+                <form action="{{ url_for('update_contact') }}" method="POST" class="form-grid">
+                    <div class="form-group">
+                        <label>{% if lang == 'EN' %}Phone Number{% else %}เบอร์โทรศัพท์ติดต่อ{% endif %}</label>
+                        <input type="text" name="phone" value="{{ site_info.phone }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>{% if lang == 'EN' %}Email Address{% else %}อีเมลติดต่อ{% endif %}</label>
+                        <input type="email" name="email" value="{{ site_info.email }}" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>{% if lang == 'EN' %}Address / Location{% else %}ที่อยู่ / สถานที่ตั้ง{% endif %}</label>
+                        <input type="text" name="address" value="{{ site_info.address }}" required>
+                    </div>
+                    <div class="form-group full-width" style="margin-top: 5px;">
+                        <button type="submit" class="btn" style="width: 100%;">{% if lang == 'EN' %}Save New Contact Info{% else %}บันทึกข้อมูลติดต่อใหม่{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar ซ่อนได้ (ไม่มีวงเล็บภาษาอังกฤษ) -->
+    <aside id="sidebar">
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}"><i class="fa-solid fa-chart-pie"></i> {{ t.nav_dash }}</a></li>
+            <li><a href="{{ url_for('inventory') }}" class="{% if request.endpoint == 'inventory' %}active{% endif %}"><i class="fa-solid fa-boxes-stacked"></i> {{ t.nav_inv }}</a></li>
+            <li><a href="{{ url_for('hospitals') }}" class="{% if request.endpoint in ['hospitals', 'hospital_rooms'] %}active{% endif %}"><i class="fa-solid fa-hospital"></i> {{ t.nav_hosp }}</a></li>
+            <li><a href="{{ url_for('requests_page') }}" class="{% if request.endpoint == 'requests_page' %}active{% endif %}"><i class="fa-solid fa-file-medical"></i> {{ t.nav_req }}</a></li>
+            <li><a href="{{ url_for('distribution') }}" class="{% if request.endpoint == 'distribution' %}active{% endif %}"><i class="fa-solid fa-truck-medical"></i> {{ t.nav_dist }}</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        }
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

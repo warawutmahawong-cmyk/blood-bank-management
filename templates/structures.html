@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1>Data Structures Visualization</h1>
+</header>
+
+<div class="section-box">
+    <h2>1. Queue (คำขอทั่วไป - FIFO)</h2>
+    <div style="display: flex; gap: 10px; margin-top: 10px; align-items: center;">
+        <span style="font-weight: bold; color: var(--primary-red);">FRONT ➔</span>
+        {% for item in queue_items %}
+        <div style="background: #f1f3f5; padding: 10px; border: 1px solid var(--gray); border-radius: 4px;">
+            {{ item.request_id }} ({{ item.hospital }})
+        </div>
+        {% endfor %}
+        <span style="font-weight: bold; color: var(--primary-red);">➔ REAR</span>
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>2. Priority Queue (จัดลำดับตามความเร่งด่วน)</h2>
+    <div style="display: flex; gap: 10px; margin-top: 10px; flex-direction: column;">
+        {% for item in pq_items %}
+        <div style="background: #f1f3f5; padding: 10px; border-left: 4px solid var(--primary-red); border-radius: 4px;">
+            [{{ item.urgency }}] ➔ <strong>{{ item.request_id }}</strong> | โรงพยาบาล: {{ item.hospital }} | กรุ๊ป: {{ item.blood_type }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>3. Linked List (ข้อมูลถุงเลือดในคลัง)</h2>
+    <div style="display: flex; gap: 10px; margin-top: 10px; align-items: center; overflow-x: auto; padding-bottom: 10px;">
+        {% for bag in ll_items %}
+        <div style="background: #f1f3f5; padding: 10px; border: 1px solid var(--gray); border-radius: 4px; min-width: 150px; text-align: center;">
+            <strong>[{{ bag.bag_id }}]</strong><br>
+            กรุ๊ป: {{ bag.blood_type }}<br>
+            สถานะ: {{ bag.status }}
+        </div>
+        <span style="font-weight: bold;">➔</span>
+        {% endfor %}
+        <span style="font-weight: bold; color: gray;">NULL</span>
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>4. Stack (ประวัติการจ่ายเลือดล่าสุด - LIFO)</h2>
+    <div style="display: flex; gap: 10px; margin-top: 10px; flex-direction: column;">
+        <span style="font-weight: bold; color: var(--primary-red);">TOP ⬇</span>
+        {% for item in stack_items %}
+        <div style="background: var(--light-red); padding: 10px; border-radius: 4px;">
+            <strong>{{ item.dist_id }}</strong> | ถุงเลือด: {{ item.bag_id }} | ส่ง: {{ item.hospital }} ({{ item.date }})
+        </div>
+        {% endfor %}
+        <span style="font-weight: bold; color: var(--primary-red);">BOTTOM</span>
+    </div>
+</div>
+{% endblock %}

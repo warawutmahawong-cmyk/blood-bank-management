@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1><i class="fa-solid fa-chart-pie"></i> {{ t.dash_title }}</h1>
+</header>
+
+<div class="card-grid">
+    <div class="card">
+        <h3>{{ t.total_bags }}</h3>
+        <div class="number">{{ total_bags }}</div>
+    </div>
+    <div class="card">
+        <h3>{{ t.available }}</h3>
+        <div class="number" style="color: #0d9488;">{{ avail_bags }}</div>
+    </div>
+    <div class="card">
+        <h3>{{ t.expiring }}</h3>
+        <div class="number" style="color: #ea580c;">{{ expiring_bags }}</div>
+    </div>
+    <div class="card">
+        <h3>{{ t.expired }}</h3>
+        <div class="number" style="color: #e53935;">{{ expired_bags }}</div>
+    </div>
+    <div class="card">
+        <h3>{{ t.queue_req }}</h3>
+        <div class="number">{{ pending_requests }}</div>
+    </div>
+    <div class="card">
+        <h3>{{ t.critical_req }}</h3>
+        <div class="number" style="color: #b71c1c;">{{ critical_requests }}</div>
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>{{ t.group_summary }}</h2>
+    <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+        {% for group, count in group_summary.items() %}
+        <div style="background: #f8fafc; padding: 12px 18px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color);">
+            <strong style="font-size: 1.1rem;">{{ group }}</strong><br>
+            <span style="color: var(--primary-red); font-weight: bold; font-size: 1.2rem;">{{ count }}</span> {{ t.bag_unit }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>{{ t.top_req }}</h2>
+    {% if recent_requests %}
+    <p style="margin-top: 10px;"><strong>{{ t.hospital }}:</strong> {{ recent_requests[0].hospital }} | <strong>{{ t.blood_type }}:</strong> {{ recent_requests[0].blood_type }} | <strong>{{ t.urgency }}:</strong> <span class="badge badge-red">{{ recent_requests[0].urgency }}</span></p>
+    {% else %}
+    <p style="margin-top: 10px; color: var(--text-muted);">{{ t.no_req }}</p>
+    {% endif %}
+</div>
+{% endblock %}

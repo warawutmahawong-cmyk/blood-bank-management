@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1><i class="fa-solid fa-hospital"></i> {{ t.hosp_title }}</h1>
+    <button onclick="openModal('addHospitalModal')" class="btn"><i class="fa-solid fa-plus"></i> {{ t.add_hosp }}</button>
+</header>
+
+<div id="addHospitalModal" class="modal">
+    <div class="modal-content">
+        <button onclick="closeModal('addHospitalModal')" class="close-btn">&times;</button>
+        <h2>{{ t.add_hosp }}</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="add_hospital">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>{% if lang == 'EN' %}Hospital Code (e.g. SIR){% else %}รหัสย่อโรงพยาบาล (เช่น SIR){% endif %}</label>
+                    <input type="text" name="id" placeholder="3-4 chars" required>
+                </div>
+                <div class="form-group">
+                    <label>{{ t.th_hosp_name }}</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>{{ t.th_phone }}</label>
+                    <input type="text" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label>{{ t.th_address }}</label>
+                    <input type="text" name="address" required>
+                </div>
+                <div class="form-group full-width" style="margin-top: 10px;">
+                    <button type="submit" class="btn" style="width: 100%;">{% if lang == 'EN' %}Save Hospital{% else %}บันทึกโรงพยาบาล{% endif %}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="section-box">
+    <h2>{{ t.hosp_list }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;">{{ t.th_hosp_code }}</th>
+                <th style="width: 25%;">{{ t.th_hosp_name }}</th>
+                <th style="width: 18%;">{{ t.th_phone }}</th>
+                <th style="width: 20%;">{{ t.th_address }}</th>
+                <th style="width: 16%; white-space: nowrap;">{{ t.th_rooms }}</th>
+                <th style="width: 11%; white-space: nowrap;">{{ t.th_action }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in hospitals %}
+            <tr>
+                <td><strong>{{ h.id }}</strong></td>
+                <td>{{ h.name }}</td>
+                <td>{{ h.phone }}</td>
+                <td>{{ h.address }}</td>
+                <td style="white-space: nowrap;">
+                    <a href="{{ url_for('hospital_rooms', h_id=h.id) }}" class="btn btn-sm" style="background-color: #0d9488; padding: 6px 10px; font-size: 0.85rem;" title="{{ t.view_rooms }}">
+                        <i class="fa-solid fa-door-open"></i> {{ t.view_rooms }}
+                    </a>
+                </td>
+                <td style="white-space: nowrap;">
+                    <button onclick="openModal('editHospModal-{{ h.id }}')" class="btn btn-sm" style="background:#319795; padding: 6px 8px; margin-right: 2px;" title="{{ t.edit }}"><i class="fa-solid fa-pen"></i></button>
+                    <form method="POST" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_hospital">
+                        <input type="hidden" name="id" value="{{ h.id }}">
+                        <button type="submit" class="btn btn-sm" style="background:#e53e3e; padding: 6px 8px;" title="{{ t.delete }}"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+
+            <!-- Modal แก้ไขโรงพยาบาล -->
+            <div id="editHospModal-{{ h.id }}" class="modal">
+                <div class="modal-content">
+                    <button onclick="closeModal('editHospModal-{{ h.id }}')" class="close-btn">&times;</button>
+                    <h2>{{ t.edit_hosp }}: {{ h.name }}</h2>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="edit_hospital">
+                        <input type="hidden" name="id" value="{{ h.id }}">
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>{{ t.th_hosp_name }}</label>
+                                <input type="text" name="name" value="{{ h.name }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t.th_phone }}</label>
+                                <input type="text" name="phone" value="{{ h.phone }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t.th_address }}</label>
+                                <input type="text" name="address" value="{{ h.address }}" required>
+                            </div>
+                            <div class="form-group full-width" style="margin-top: 10px;">
+                                <button type="submit" class="btn" style="width: 100%;">{% if lang == 'EN' %}Update Hospital{% else %}บันทึกการแก้ไข{% endif %}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

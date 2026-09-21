@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+    <h1><i class="fa-solid fa-truck-medical"></i> {{ t.dist_title }}</h1>
+</header>
+
+<div class="section-box" style="border-left: 5px solid var(--primary-red);">
+    <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.3rem;">
+        <i class="fa-solid fa-clipboard-list" style="color: var(--primary-red);"></i> {{ t.next_req }}
+    </h2>
+    
+    {% if selected_req %}
+    <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 1rem;">
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.85rem; display: block; font-weight: 600;">{% if lang == 'EN' %}REQUEST ID{% else %}รหัสคำขอ{% endif %}</span>
+                <strong style="font-size: 1.1rem; color: var(--dark-red);">{{ selected_req.request_id }}</strong>
+            </div>
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.85rem; display: block; font-weight: 600;">{{ t.hospital }}</span>
+                <strong style="font-size: 1.1rem;">{{ selected_req.hospital }}</strong>
+            </div>
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.85rem; display: block; font-weight: 600;">{{ t.blood_type }}</span>
+                <span class="badge badge-red" style="font-size: 0.95rem; padding: 4px 12px;">{{ selected_req.blood_type }}</span>
+            </div>
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.85rem; display: block; font-weight: 600;">{{ t.urgency }}</span>
+                <span class="badge badge-red" style="font-size: 0.95rem; padding: 4px 12px;">{{ selected_req.urgency }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <h3 style="margin-top: 25px; margin-bottom: 12px; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-box-archive" style="color: #0d9488;"></i> {{ t.fefo_title }}
+    </h3>
+    
+    {% if selected_bag %}
+    <div style="background: linear-gradient(135deg, #fff5f5, #ffebee); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(229, 57, 53, 0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <div style="font-size: 0.85rem; color: var(--primary-red); font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">
+                <i class="fa-solid fa-clock-rotate-left"></i> First Expired, First Out (FEFO)
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+                {% if lang == 'EN' %}Bag ID{% else %}รหัสถุงเลือด{% endif %}: <span style="color: var(--dark-red);">{{ selected_bag.bag_id }}</span>
+            </div>
+            <div style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">
+                {% if lang == 'EN' %}Expiry Date{% else %}วันหมดอายุ{% endif %}: <strong>{{ selected_bag.expiry_date }}</strong> | 
+                {% if lang == 'EN' %}Status{% else %}สถานะอายุ{% endif %}: <span class="badge badge-orange" style="font-size: 0.8rem;">{{ selected_bag.get_expiry_status() }}</span>
+            </div>
+        </div>
+        <form method="POST">
+            <button type="submit" class="btn" style="background: linear-gradient(135deg, #0d9488, #0f766e); padding: 14px 28px; font-size: 1.05rem; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);">
+                <i class="fa-solid fa-circle-check"></i> {{ t.confirm_dist }}
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div style="background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; padding: 18px; border-radius: 10px; font-weight: 600; margin-bottom: 20px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> ❌ {{ t.no_avail_bag }}
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 1.05rem;">
+        <i class="fa-solid fa-circle-check" style="font-size: 2rem; color: #0d9488; margin-bottom: 10px; display: block;"></i>
+        {{ t.no_req }}
+    </div>
+    {% endif %}
+</div>
+
+<div class="section-box">
+    <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.3rem;">
+        <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary-red);"></i> {{ t.dist_history }}
+    </h2>
+    <table>
+        <thead>
+            <tr>
+                <th>{{ t.th_dist_id }}</th>
+                <th>{{ t.th_bag_id }}</th>
+                <th>{{ t.th_dest_hosp }}</th>
+                <th>{{ t.th_group }}</th>
+                <th>{{ t.th_dist_time }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in stack_items %}
+            <tr>
+                <td><strong>{{ item.dist_id }}</strong></td>
+                <td>{{ item.bag_id }}</td>
+                <td>{{ item.hospital }}</td>
+                <td><span class="badge badge-red">{{ item.blood_type }}</span></td>
+                <td>{{ item.date }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted);">{% if lang == 'EN' %}No distribution history{% else %}ยังไม่มีประวัติการจ่ายเลือด{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
